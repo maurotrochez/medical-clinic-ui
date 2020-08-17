@@ -17,11 +17,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Login from '../auth/Login';
 import Auth from '../../context/store/Auth';
+import AuthNavBar from './AuthNavBar';
 
 const drawerWidth = 240;
 
@@ -83,12 +83,7 @@ export default function Header(props) {
                 </ListItem>
             </List>
             <Divider />
-            <List>
-                <ListItem button>
-                    <ListItemIcon><ExitToAppIcon /></ListItemIcon>
-                    <ListItemText primary="Exit" />
-                </ListItem>
-            </List>
+            <AuthNavBar/>
         </div>
     );
 

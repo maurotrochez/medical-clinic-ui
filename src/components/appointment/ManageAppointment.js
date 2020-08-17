@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 export default function ManageAppointment() {
     const classes = useStyles();
     const history = useHistory();
+    
     const [appointment, setAppointment] = useState({
         notes: "",
         appointmentTypeId: 1,
@@ -77,10 +78,11 @@ export default function ManageAppointment() {
 
     const onSave = async (e) => {
         e.preventDefault();
+        const jwt = localStorage.getItem("jwt");
         try {
             const data = await fetch(`${constant.API_URL}/api/appointments`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", Authorization: `bearer ${jwt}` },
                 body: JSON.stringify(appointment)
             });
 

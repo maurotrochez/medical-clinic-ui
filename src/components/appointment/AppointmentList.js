@@ -1,22 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import * as constant from "../../utils/constants";
 import { List, ListItem, ListItemSecondaryAction, IconButton, Divider, ListItemText, Button, Container, Popover, Typography } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import CancelIcon from '@material-ui/icons/Cancel';
 import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
+import AuthGlobal from "../../context/store/AuthGlobal";
 
 const useStyles = makeStyles((theme) => ({
     typography: {
-      padding: theme.spacing(2),
+        padding: theme.spacing(2),
     },
-  }));
+}));
 
-export default function AppointmentList() {
+export default function AppointmentList(props) {
     const classes = useStyles();
+    const context = useContext(AuthGlobal);
+
     const [appointments, setAppointments] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [error, setError] = useState("Loading...");
+    const [showChild, setShowChild] = useState(false);
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
@@ -24,14 +28,35 @@ export default function AppointmentList() {
     let history = useHistory();
 
     useEffect(() => {
+        if (
+            context.stateUser.isAuthenticated === false ||
+            context.stateUser.isAuthenticated === null
+        ) {
+            props.history.push("/login");
+        }
+        setShowChild(true);
+
+        const jwt = localStorage.getItem("jwt");
+
         const fetchData = async () => {
-            const data = await fetch(`${constant.API_URL}/api/appointments`,
-                { method: "GET", headers: { "Content-Type": "application/json" } });
-            setAppointments(await data.json());
+            try {
+                const data = await fetch(`${constant.API_URL}/api/appointments`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `bearer ${jwt}`
+                        },
+                    });
+
+                setAppointments(await data.json());
+            } catch (error) {
+                console.log(error);
+            }
         };
         fetchData();
 
-    }, [])
+    }, [context.stateUser.isAuthenticated, props.history])
 
     const onClickEditAppointment = (id) => {
         console.log(id);
@@ -41,9 +66,10 @@ export default function AppointmentList() {
     const onClickCancelAppointment = async (event, id) => {
         try {
             setAnchorEl(event.currentTarget);
+            const jwt = localStorage.getItem("jwt");
             const data = await fetch(`${constant.API_URL}/api/appointments/${id}/cancel`,
                 {
-                    method: "POST", headers: { "Content-Type": "application/json" }
+                    method: "POST", headers: { "Content-Type": "application/json", Authorization: `bearer ${jwt}` }
                 });
             if (data.ok) {
                 setAnchorEl(null);
@@ -69,6 +95,7 @@ export default function AppointmentList() {
         history.push("/appointments/new");
     }
 
+    if (!showChild) return null;
     return (
         <Container >
             <List>
