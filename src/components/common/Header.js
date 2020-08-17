@@ -14,6 +14,7 @@ export default function Header() {
                 <Route exact path="/" component={AppointmentList}/>
                 <Route path="/patients" component={PatientList}/>
                 <Route path="/appointments/:id" component={ManageAppointment}/>
+                <Route exact path="/appointments/new" component={ManageAppointment}/>
             </Switch>
         </Router>
     )
