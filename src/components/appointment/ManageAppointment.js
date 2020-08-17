@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, TextField, MenuItem, Button } from "@material-ui/core";
+import { TextField, MenuItem, Button, CssBaseline } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import * as constant from "../../utils/constants";
 import { useHistory } from "react-router-dom";
@@ -93,7 +93,8 @@ export default function ManageAppointment() {
     }
 
     return (
-        <Container>
+        <div >
+            <CssBaseline />
             <form autoComplete="off" className={classes.root}>
                 <div>
                     <TextField
@@ -154,6 +155,6 @@ export default function ManageAppointment() {
                     Save
                 </Button>
             </form>
-        </Container>
+        </div>
     )
 }
