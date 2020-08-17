@@ -92,8 +92,6 @@ export default function ManageAppointment() {
         }
     }
 
-    const isValidForm = () => !!(appointment.date)
-
     return (
         <Container>
             <form autoComplete="off" className={classes.root}>
