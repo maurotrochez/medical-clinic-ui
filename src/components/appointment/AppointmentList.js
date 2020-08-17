@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import * as constant from "../../utils/constants";
 import { List, ListItem, ListItemSecondaryAction, IconButton, Divider, ListItemText, Button, Container, Popover, Typography } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
 import CancelIcon from '@material-ui/icons/Cancel';
 import { useHistory } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
@@ -58,11 +57,6 @@ export default function AppointmentList(props) {
 
     }, [context.stateUser.isAuthenticated, props.history])
 
-    const onClickEditAppointment = (id) => {
-        console.log(id);
-
-    };
-
     const onClickCancelAppointment = async (event, id) => {
         try {
             setAnchorEl(event.currentTarget);
@@ -105,11 +99,6 @@ export default function AppointmentList(props) {
                             <ListItemText primary={`${el.patient.firstName} ${el.patient.lastName} (${el.patient.identificationNumber})`}
                                 secondary={`${el.appointmentType.description} at ${convertDate(el.date)}`} />
                             <ListItemSecondaryAction>
-                                <IconButton edge="end"
-                                    aria-label="edit"
-                                    onClick={() => onClickEditAppointment(el.id)}>
-                                    <EditIcon />
-                                </IconButton>
                                 <IconButton edge="end"
                                     aria-label="edit"
                                     onClick={(e) => onClickCancelAppointment(e, el.id)}>

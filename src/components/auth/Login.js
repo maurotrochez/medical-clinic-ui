@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useState } from "react";
 import { login } from "../../context/actions/authentication.action";
 import AuthGlobal from "../../context/store/AuthGlobal";
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, Container } from "@material-ui/core";
 
 export default function Login(props) {
 
@@ -12,7 +12,6 @@ export default function Login(props) {
     const [showChild, setShowChild] = useState(false);
 
     useEffect(() => {
-        console.log(context.stateUser.isAuthenticated);
         if (context.stateUser.isAuthenticated === true) {
             props.history.push("/");
         }
@@ -38,7 +37,7 @@ export default function Login(props) {
     }
     else {
         return (
-            <div>
+            <Container>
                 <form autoComplete="off">
                     <div>
                         <TextField required
@@ -63,7 +62,7 @@ export default function Login(props) {
                     </Button>
                     {error ? <div><span>{error}</span></div> : null}
                 </form>
-            </div>
+            </Container>
         )
     }
 }

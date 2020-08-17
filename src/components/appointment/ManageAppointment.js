@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { TextField, MenuItem, Button, CssBaseline } from "@material-ui/core";
+import React, { useState, useEffect, useContext } from "react";
+import { TextField, MenuItem, Button, CssBaseline, Container } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import * as constant from "../../utils/constants";
 import { useHistory } from "react-router-dom";
+import AuthGlobal from "../../context/store/AuthGlobal";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,10 +19,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function ManageAppointment() {
+export default function ManageAppointment(props) {
     const classes = useStyles();
     const history = useHistory();
-    
+    const context = useContext(AuthGlobal);
+
     const [appointment, setAppointment] = useState({
         notes: "",
         appointmentTypeId: 1,
@@ -30,43 +32,59 @@ export default function ManageAppointment() {
         isCancelled: false,
 
     });
+    const [patients, setPatients] = useState([{ id: 1 }]);
+    const [appointmentTypes, setAppointmentTypes] = useState([{ id: 1 }]);
     const [error, setError] = useState("");
+    const [showChild, setShowChild] = useState(false);
 
-    const appointmentTypes = [
-        {
-            id: 1,
-            description: "Medicina g",
-        },
-        {
-            id: 2,
-            description: "Odontologia",
-        },
-        {
-            id: 3,
-            description: "Otros",
-        },
-        {
-            id: 4,
-            description: "Otros 2",
-        },
-    ];
-
-    const patients = [
-        {
-            id: 1,
-            firstName: "Juan",
-            lastName: "Perez",
-            identificationNumber: 123,
-
-        },
-        {
-            id: 2,
-            firstName: "David",
-            lastName: "Trochez",
-            identificationNumber: 1234
-
+    useEffect(() => {
+        if (
+            context.stateUser.isAuthenticated === false ||
+            context.stateUser.isAuthenticated === null
+        ) {
+            props.history.push("/login");
         }
-    ];
+        setShowChild(true);
+
+        const jwt = localStorage.getItem("jwt");
+        const fecthPatients = async () => {
+            try {
+                const data = await fetch(`${constant.API_URL}/api/patients`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `bearer ${jwt}`
+                        },
+                    });
+
+                setPatients(await data.json());
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        const fetchAppTypes = async () => {
+            try {
+                const data = await fetch(`${constant.API_URL}/api/appointmentTypes`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `bearer ${jwt}`
+                        },
+                    });
+
+                setAppointmentTypes(await data.json());
+            } catch (error) {
+
+            }
+        }
+
+        fecthPatients();
+        fetchAppTypes();
+
+    }, [context.stateUser.isAuthenticated, props.history]);
 
     const handleChanging = (event) => {
         const { name, value } = event.target;
@@ -93,9 +111,9 @@ export default function ManageAppointment() {
             console.log(error);
         }
     }
-
+    if (!showChild) return null;
     return (
-        <div >
+        <Container >
             <CssBaseline />
             <form autoComplete="off" className={classes.root}>
                 <div>
@@ -157,6 +175,6 @@ export default function ManageAppointment() {
                     Save
                 </Button>
             </form>
-        </div>
+        </Container>
     )
 }
